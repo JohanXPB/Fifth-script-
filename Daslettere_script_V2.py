@@ -52,6 +52,27 @@ if uploaded_file is not None:
                         average = column_sum / (end_row - start_row + 1)
                         sheet.cell(end_row, 11, value=average)
 
+        # Save the changes
+        workbook.save(file_name)
+        print("Average calculations and updates have been completed.")
+
+        # Print the processed strings to the screen
+        processed_strings_output = "\n".join(processed_strings)
+        print(f"Processed strings:\n{processed_strings_output}")
+
+        # Open the Excel file again
+        workbook = openpyxl.load_workbook(file_name)
+        sheet = workbook.active
+
+        # Print all values in column C for each string and their averages
+        for string in processed_strings:
+            c_values = []
+            for row in range(2, sheet.max_row + 1):
+                if str(sheet.cell(row, 1).value).split('_')[0] == string:
+                    c_values.append(sheet.cell(row, 3).value)
+            print(f"Values for {string}: {c_values}")
+            print(f"Average for {string}: {sum(c_values) / len(c_values)}")
+
         # Create a new sheet for metadata
         meta_sheet = workbook.create_sheet("Meta Data")
         for i, line in enumerate(meta_data):
@@ -61,8 +82,6 @@ if uploaded_file is not None:
         new_sheet = workbook.create_sheet("Processed Data")
         headers = ["label", "power", "rel mo", "abs mo", "temp set", "temp rep", "status", "date/time"]
         new_sheet.append(headers)
-
-
 
         for line in buffer.getvalue().split('\n'):
             parts = line.split(":")
@@ -81,23 +100,9 @@ if uploaded_file is not None:
         for i, header in enumerate(headers, start=1):
             sheet1.cell(row=1, column=i, value=header)
 
-
         # Save the changes
         workbook.save(file_name)
-
-        # Creating new sheets for metadata
-        meta_sheet = workbook.create_sheet("Meta Data")
-        for i, line in enumerate(meta_data):
-            meta_sheet.cell(row=i + 1, column=1, value=line)
-
-        # Create a new sheet for processed data with headers
-        new_sheet = workbook.create_sheet("Processed Data")
-        headers = ["label", "power", "rel mo", "abs mo", "temp set", "temp rep", "status", "date/time"]
-        new_sheet.append(headers)
-
-        # Save the final changes
-        workbook.save(file_name)
-        st.write("Data processing completed successfully! Download the file: ", file_name)
+        print("Strings have been inserted into the first row of Sheet1 in the Excel file.")
 
         # Reopen the Excel file
         workbook = openpyxl.load_workbook(file_name)
@@ -109,6 +114,10 @@ if uploaded_file is not None:
         for row in processed_data_sheet.iter_rows(min_row=2, min_col=2, max_row=processed_data_sheet.max_row, max_col=2):
             for cell in row:
                 cell.value = str(cell.value).lstrip()
+
+        # Save the changes
+        workbook.save(file_name)
+        print("Leading spaces have been removed from column B in the Processed Data sheet.")
 
 
         
