@@ -100,7 +100,7 @@ if uploaded_file is not None:
         st.write("Data processing completed successfully! Download the file: ", file_name)
 
         # Reopen the Excel file
-        workbook = openpyxl.load_workbook(excel_save_path)
+        workbook = openpyxl.load_workbook(file_name)
 
         # Access the "Processed Data" sheet
         processed_data_sheet = workbook["Processed Data"]
